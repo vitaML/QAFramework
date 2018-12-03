@@ -6,8 +6,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
 
 public class BrowserFactory {
+
+    private static final Logger LOG = new Log(BrowserFactory.class).getLogger();
+
     public BrowserFactory() {
     }
 
@@ -20,8 +24,9 @@ public class BrowserFactory {
                 break;
             }
             case "FF": {
+                ClassLoader classLoader = getClass().getClassLoader();
                 System.setProperty("webdriver.gecko.driver",
-                        "C:\\Users\\Stepan\\Downloads\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+                        classLoader.getResource("drivers/geckodriver.exe").getPath());
                 DesiredCapabilities capabilities = DesiredCapabilities.firefox();
                 capabilities.setCapability("marionette", true);
                 webDriver = new FirefoxDriver(capabilities);
@@ -30,6 +35,10 @@ public class BrowserFactory {
             case "IE": {
                 webDriver = new InternetExplorerDriver();
                 break;
+            }
+            default: {
+                LOG.error("WebDriver was not initialized.");
+                System.exit(1);
             }
         }
         return webDriver;
